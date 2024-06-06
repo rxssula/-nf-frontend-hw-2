@@ -1,7 +1,6 @@
 "use client";
 import Image from "next/image";
 import { useState } from "react";
-import TaskItem from "./components/TaskItem";
 
 const task = { id: 1, text: "Todo Test", completed: false };
 
@@ -11,23 +10,27 @@ export default function Home() {
   const filter = "all"; // rewrite using states
 
   const handleAddTask = () => {
-    setTasks((prevTasks) => [
-      ...prevTasks,
-      { id: prevTasks.length + 1, text: taskText, completed: false },
-    ]);
+    const newTask = {
+      id: tasks.length + 1,
+      text: taskText,
+      completed: false,
+    };
+    setTasks((prevTasks) => [...prevTasks, newTask]);
     setTaskText("");
   };
 
   const handleToggleTask = (id) => {
-    setTasks(
-      tasks.map((task) => {
-        task.id === id ? { ...task, completed: !task.completed } : task;
-      })
-    );
+    const newTasks = (prevTasks) =>
+      prevTasks.map((task) => {
+        task.id == id ? { ...task, completed: !task.completed } : task;
+      });
+
+    setTasks(newTasks);
   };
 
-  const handleDeleteTask = () => {
-    // Implement delete task logic here
+  const handleDeleteTask = (id) => {
+    const newTasks = tasks.filter((task) => task.id !== id);
+    setTasks(newTasks);
   };
 
   return (
@@ -55,7 +58,54 @@ export default function Home() {
         {/* Basic level: map through tasks state by using this code: */}
         <ul>
           {tasks.map((task) => (
-            <TaskItem {...task} handleToggleTask={handleToggleTask} />
+            <li
+              key={task.id}
+              className="flex justify-between items-center p-2 bg-gray-900 rounded mb-2"
+            >
+              <div className="flex items-center">
+                <button
+                  className="w-6 h-6 my-auto mr-6"
+                  onClick={() => handleToggleTask(task.id)}
+                >
+                  <Image
+                    src={
+                      task.completed
+                        ? "/images/checked.svg"
+                        : "/images/circle.svg"
+                    }
+                    alt="Task status"
+                    width={30}
+                    height={30}
+                  />
+                </button>
+                <span
+                  className={`ml-2 ${
+                    task.completed ? "line-through text-gray-500" : "text-white"
+                  }`}
+                >
+                  {task.text}
+                </span>
+              </div>
+              <button
+                onClick={() => handleDeleteTask(task.id)}
+                className="text-gray-400 hover:text-white"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-6 w-6"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M6 18L18 6M6 6l12 12"
+                  />
+                </svg>
+              </button>
+            </li>
           ))}
         </ul>
         <div className="mt-4 flex justify-between items-center text-sm text-gray-400">
