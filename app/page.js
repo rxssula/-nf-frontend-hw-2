@@ -10,21 +10,21 @@ export default function Home() {
   const filter = "all"; // rewrite using states
 
   const handleAddTask = () => {
-    const newTask = {
-      id: tasks.length + 1,
-      text: taskText,
-      completed: false,
-    };
-    setTasks((prevTasks) => [...prevTasks, newTask]);
+    if (taskText.trim()) {
+      const newTask = {
+        id: tasks.length + 1,
+        text: taskText,
+        completed: false,
+      };
+      setTasks((prevTasks) => [...prevTasks, newTask]);
+    }
     setTaskText("");
   };
 
   const handleToggleTask = (id) => {
-    const newTasks = (prevTasks) =>
-      prevTasks.map((task) => {
-        task.id == id ? { ...task, completed: !task.completed } : task;
-      });
-
+    const newTasks = tasks.map((task) =>
+      task.id === id ? { ...task, completed: !task.completed } : task
+    );
     setTasks(newTasks);
   };
 
@@ -109,7 +109,7 @@ export default function Home() {
           ))}
         </ul>
         <div className="mt-4 flex justify-between items-center text-sm text-gray-400">
-          <span> 'n' items left</span>{" "}
+          <span> {tasks.length} items left</span>{" "}
           {/* show how many uncompleted items left */}
           <div>
             <button
