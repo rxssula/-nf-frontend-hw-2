@@ -1,14 +1,29 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import TaskList from "./components/TaskList";
 
-const task = { id: 1, text: "Todo Test", completed: false };
-
 export default function Home() {
-  const [tasks, setTasks] = useState([task]);
+  const [tasks, setTasks] = useState([]);
   const [taskText, setTaskText] = useState("");
   const [filter, setFilter] = useState("all");
-  const [nextId, setNextId] = useState(2);
+  const [nextId, setNextId] = useState(1);
+  const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+    const storedTasks = localStorage.getItem("tasks");
+    if (storedTasks) {
+      setTasks(JSON.parse(storedTasks));
+    } else {
+      setTasks([]);
+    }
+    setIsMounted(true);
+  }, []);
+
+  useEffect(() => {
+    if (isMounted) {
+      localStorage.setItem("tasks", JSON.stringify(tasks));
+    }
+  }, [tasks, isMounted]);
 
   const handleAddTask = () => {
     if (taskText.trim()) {
